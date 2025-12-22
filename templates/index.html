@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>DocAnalyzer - Investment PDF Assistant</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    :root {
+      --bg-dark: #050816;
+      --bg-card: #0b1020;
+      --accent: #2f6bff;
+      --accent-soft: rgba(47, 107, 255, 0.25);
+      --text-main: #f9fbff;
+      --text-sub: #a4b0d0;
+      --danger: #ff4d6a;
+      --success: #25c88a;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #182848, #050816 55%);
+      color: var(--text-main);
+      min-height: 100vh;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    /* NAVBAR */
+
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 40px;
+      backdrop-filter: blur(12px);
+      background: linear-gradient(to right, rgba(5, 8, 22, 0.96), rgba(5, 8, 22, 0.7));
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-badge {
+      width: 34px;
+      height: 34px;
+      border-radius: 12px;
+      background: radial-gradient(circle at 10% 20%, #42a5f5, #7e57c2 45%, #26a69a 90%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.7);
+    }
+
+    .logo-badge span {
+      font-weight: 900;
+      font-size: 18px;
+      color: #fdfdff;
+    }
+
+    .brand {
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    .nav-subtitle {
+      font-size: 11px;
+      color: var(--text-sub);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 20px;
+      font-size: 14px;
+      color: var(--text-sub);
+    }
+
+    .nav-links a:hover {
+      color: var(--text-main);
+    }
+
+    .nav-right button {
+      padding: 8px 18px;
+      border-radius: 999px;
+      border: none;
+      background: var(--accent);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 8px 18px rgba(47, 107, 255, 0.4);
+    }
+
+    .nav-right button:hover {
+      background: #2450d8;
+    }
+
+    /* HERO */
+
+    .hero {
+      max-width: 1100px;
+      margin: 40px auto 10px;
+      padding: 0 20px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+      gap: 40px;
+      align-items: center;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(88, 144, 255, 0.6);
+      background: rgba(9, 12, 30, 0.9);
+      font-size: 11px;
+      color: var(--text-sub);
+      margin-bottom: 16px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .pill-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 8px var(--accent);
+    }
+
+    .hero-title-main {
+      font-size: 40px;
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 10px;
+    }
+
+    .hero-title-main span {
+      color: #58a6ff;
+    }
+
+    .hero-sub {
+      font-size: 15px;
+      color: var(--text-sub);
+      max-width: 480px;
+      line-height: 1.5;
+      margin-bottom: 18px;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      padding: 10px 22px;
+      border-radius: 999px;
+      border: none;
+      background: var(--accent);
+      color: #fff;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      box-shadow: 0 10px 24px var(--accent-soft);
+    }
+
+    .btn-primary:hover {
+      background: #2450d8;
+    }
+
+    .btn-ghost {
+      padding: 10px 16px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      background: transparent;
+      color: var(--text-sub);
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .btn-ghost:hover {
+      border-color: rgba(255, 255, 255, 0.3);
+      color: var(--text-main);
+    }
+
+    .hero-right {
+      justify-self: center;
+    }
+
+    .hero-card {
+      width: 100%;
+      max-width: 380px;
+      border-radius: 18px;
+      background: radial-gradient(circle at top, #111830, #050816 70%);
+      padding: 18px 18px 20px;
+      border: 1px solid rgba(120, 149, 255, 0.4);
+      box-shadow: 0 22px 40px rgba(0, 0, 0, 0.7);
+    }
+
+    .hero-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .hero-chip {
+      font-size: 11px;
+      padding: 4px 9px;
+      border-radius: 999px;
+      background: rgba(60, 210, 149, 0.16);
+      color: #7ee0b3;
+      border: 1px solid rgba(82, 231, 171, 0.5);
+    }
+
+    .hero-card-body {
+      font-size: 13px;
+      color: var(--text-sub);
+      line-height: 1.5;
+    }
+
+    /* WORKSPACE */
+
+    .workspace {
+      max-width: 1100px;
+      margin: 10px auto 60px;
+      padding: 0 20px 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .workspace-top {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .card {
+      background: rgba(6, 11, 30, 0.98);
+      border-radius: 18px;
+      padding: 16px 18px 18px;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.55);
+    }
+
+    .upload-card,
+    .qa-card {
+      flex: 1 1 320px;
+      min-width: 0;
+    }
+
+    .card-title {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .card-sub {
+      font-size: 12px;
+      color: var(--text-sub);
+      margin-bottom: 14px;
+    }
+
+    /* Upload */
+
+    .upload-box {
+      margin-top: 8px;
+      padding: 18px 14px;
+      border-radius: 14px;
+      border: 1px dashed rgba(255, 255, 255, 0.18);
+      background: radial-gradient(circle at top, rgba(34, 41, 88, 0.9), rgba(7, 10, 27, 0.9));
+      text-align: center;
+    }
+
+    .upload-box p {
+      font-size: 13px;
+      color: var(--text-sub);
+      margin-bottom: 10px;
+    }
+
+    .upload-box input[type="file"] {
+      display: none;
+    }
+
+    .upload-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      background: #1f6bff;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .upload-btn span {
+      font-size: 16px;
+    }
+
+    .status-text {
+      margin-top: 8px;
+      font-size: 12px;
+      text-align: left;
+      color: var(--text-sub);
+    }
+
+    .status-text.success {
+      color: var(--success);
+    }
+    .status-text.error {
+      color: var(--danger);
+    }
+
+    /* Q&A */
+
+    .qa-input {
+      width: 100%;
+      min-height: 110px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: #050816;
+      padding: 10px 12px;
+      color: var(--text-main);
+      font-size: 13px;
+      resize: vertical;
+      outline: none;
+    }
+
+    .qa-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(47, 107, 255, 0.4);
+    }
+
+    .qa-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .btn-small {
+      padding: 7px 18px;
+      border-radius: 999px;
+      font-size: 13px;
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn-ask {
+      background: var(--accent);
+      color: #fff;
+    }
+    .btn-ask:hover {
+      background: #2450d8;
+    }
+
+    /* WIDE CHAT ANSWER */
+
+    .answer-chat {
+      margin-top: 4px;
+      background: linear-gradient(145deg, #0b1020, #050816);
+      border-radius: 18px;
+      border-left: 4px solid var(--accent);
+      padding: 18px;
+      font-size: 14px;
+      white-space: pre-wrap;
+      line-height: 1.6;
+      min-height: 110px;
+      color: var(--text-main);
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.55);
+    }
+
+    .answer-chat-header {
+      font-size: 12px;
+      color: var(--text-sub);
+      margin-bottom: 6px;
+    }
+
+    .pages-info {
+      margin-top: 6px;
+      font-size: 13px;
+      color: var(--accent);
+    }
+
+    @media (max-width: 960px) {
+      .hero {
+        grid-template-columns: 1fr;
+      }
+      .hero-right {
+        order: -1;
+        justify-self: flex-start;
+      }
+      .nav {
+        padding: 12px 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <header class="nav">
+    <div class="nav-left">
+      <div class="logo-badge">
+        <span>📄</span>
+      </div>
+      <div>
+        <div class="brand">DocAnalyzer</div>
+        <div class="nav-subtitle">AI-powered investment PDFs</div>
+      </div>
+    </div>
+    <nav class="nav-links">
+      <a href="#workspace">Product</a>
+      <a href="javascript:void(0)">Insights</a>
+      <a href="javascript:void(0)">How it Works</a>
+      <a href="javascript:void(0)">Blog</a>
+    </nav>
+    <div class="nav-right">
+      <button onclick="document.getElementById('workspace').scrollIntoView({behavior:'smooth'})">
+        Get Started
+      </button>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div>
+      <div class="pill">
+        <span class="pill-dot"></span>
+        AI-POWERED INVESTMENT ANALYSIS
+      </div>
+      <h1 class="hero-title-main">
+        Understand Your Investment <span>PDFs</span><br />in Seconds
+      </h1>
+      <p class="hero-sub">
+        Upload KIMs, fund factsheets, and scheme documents. Ask questions like
+        “What is the minimum investment?” or “What is the expense ratio?” and get clear answers backed only by your documents.
+      </p>
+      <div class="hero-actions">
+        <button class="btn-primary" onclick="document.getElementById('workspace').scrollIntoView({behavior:'smooth'})">
+          Upload a PDF
+        </button>
+        <button class="btn-ghost">
+          Gemini / GPT RAG · PDF-native
+        </button>
+      </div>
+    </div>
+
+    <div class="hero-right">
+      <div class="hero-card">
+        <div class="hero-card-header">
+          <div style="font-size:13px;font-weight:600;">Analysis & Q&A</div>
+          <div class="hero-chip">Gemini Enabled</div>
+        </div>
+        <div class="hero-card-body">
+          Ready to analyze your investment documents. Upload a PDF below and ask
+          a question like:
+          <br /><br />
+          <em>“What is the minimum initial investment?”</em><br />
+          <em>“Can I redeem through a financial intermediary?”</em>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WORKSPACE -->
+  <section id="workspace" class="workspace">
+    <div class="workspace-top">
+      <!-- Upload card -->
+      <div class="card upload-card">
+        <div class="card-title">Upload PDFs</div>
+        <div class="card-sub">Upload KIMs, SIDs, or factsheets to index for Q&A.</div>
+
+        <div class="upload-box">
+          <p>Select a PDF to index. The server will extract and embed the content for question-answering.</p>
+          <label class="upload-btn">
+            <span>⬆</span>
+            <span>Select PDF</span>
+            <input type="file" id="pdf" accept="application/pdf">
+          </label>
+          <div style="margin-top:10px;">
+            <button class="btn-small btn-ask" onclick="uploadPDF()">Upload & Index</button>
+          </div>
+        </div>
+
+        <div id="uploadStatus" class="status-text"></div>
+      </div>
+
+      <!-- Q&A card -->
+      <div class="card qa-card">
+        <div class="card-title">Analysis & Q&A</div>
+        <div class="card-sub">
+          Ask questions about the indexed document. Answers are generated strictly from the PDF context.
+        </div>
+
+        <textarea id="question" class="qa-input"
+          placeholder="Example: What is the minimum investment amount?&#10;Example: What are the exit load conditions?"></textarea>
+
+        <div class="qa-actions">
+          <button class="btn-small btn-ask" onclick="askQuestion()">Get Answer</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Wide chat-style answer -->
+    <div class="answer-chat" id="answerBox">
+      <div class="answer-chat-header">AI Answer</div>
+      <div id="answerText">Ask a question to see the answer here.</div>
+    </div>
+    <div id="pages" class="pages-info"></div>
+  </section>
+
+  <script>
+    function uploadPDF() {
+      const fileInput = document.getElementById("pdf");
+      const file = fileInput.files[0];
+      const statusEl = document.getElementById("uploadStatus");
+
+      if (!file) {
+        alert("Please choose a PDF first.");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("pdf", file);
+
+      statusEl.textContent = "Uploading & processing PDF...";
+      statusEl.className = "status-text";
+
+      fetch("/upload", {
+        method: "POST",
+        body: formData
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.status === "ok") {
+          statusEl.textContent = "✅ PDF processed successfully!";
+          statusEl.className = "status-text success";
+        } else {
+          statusEl.textContent = "❌ " + data.msg;
+          statusEl.className = "status-text error";
+        }
+      })
+      .catch(err => {
+        statusEl.textContent = "❌ Error: " + err;
+        statusEl.className = "status-text error";
+      });
+    }
+
+    function askQuestion() {
+      const qEl = document.getElementById("question");
+      const question = qEl.value.trim();
+      const answerTextEl = document.getElementById("answerText");
+      const pagesEl = document.getElementById("pages");
+
+      if (!question) {
+        alert("Please type a question.");
+        return;
+      }
+
+      answerTextEl.textContent = "⏳ Thinking...";
+      pagesEl.textContent = "";
+
+      fetch("/ask", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ question })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.status === "ok") {
+          answerTextEl.textContent = data.answer || "No answer.";
+          if (data.pages && data.pages.length > 0) {
+            pagesEl.textContent = "Source page(s): " + data.pages.join(", ");
+          } else {
+            pagesEl.textContent = "";
+          }
+        } else {
+          answerTextEl.textContent = "❌ " + data.msg;
+          pagesEl.textContent = "";
+        }
+      })
+      .catch(err => {
+        answerTextEl.textContent = "❌ Error: " + err;
+        pagesEl.textContent = "";
+      });
+    }
+  </script>
+</body>
+</html>

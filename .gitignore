@@ -1,0 +1,75 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.coverage
+htmlcov/
+.nox/
+.tox/
+.hypothesis/
+
+# Virtual Environments
+.venv/
+venv/
+env/
+ENV/
+bin/
+lib/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Secrets and Configuration
+.env
+.env.local
+.env.*.local
+
+# Project Storage & Databases (Local-only artifacts)
+doc_analyzer.db
+doc_analyzer.db-journal
+doc_analyzer.db-shm
+doc_analyzer.db-wal
+*.db
+*.sqlite
+*.sqlite3
+
+# Uploaded Files & Generated Vector Store Indexes
+uploads/
+indexes/
+
+# Editor / IDE configs
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+*~
+
+# OS metadata
+Thumbs.db
+EHthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Logs
+*.log
+logs/
+pip-log.txt
+pip-delete-this-directory.txt

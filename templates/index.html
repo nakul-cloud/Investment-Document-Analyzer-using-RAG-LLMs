@@ -1,0 +1,1303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>DocAnalyzer - Investment PDF Assistant</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    :root {
+      --bg-dark: #050816;
+      --bg-card: #0b1020;
+      --accent: #2f6bff;
+      --accent-soft: rgba(47, 107, 255, 0.25);
+      --text-main: #f9fbff;
+      --text-sub: #a4b0d0;
+      --danger: #ff4d6a;
+      --success: #25c88a;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #182848, #050816 55%);
+      color: var(--text-main);
+      min-height: 100vh;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    /* NAVBAR */
+
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 40px;
+      backdrop-filter: blur(12px);
+      background: linear-gradient(to right, rgba(5, 8, 22, 0.96), rgba(5, 8, 22, 0.7));
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-badge {
+      width: 34px;
+      height: 34px;
+      border-radius: 12px;
+      background: radial-gradient(circle at 10% 20%, #42a5f5, #7e57c2 45%, #26a69a 90%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.7);
+    }
+
+    .logo-badge span {
+      font-weight: 900;
+      font-size: 18px;
+      color: #fdfdff;
+    }
+
+    .brand {
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    .nav-subtitle {
+      font-size: 11px;
+      color: var(--text-sub);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 20px;
+      font-size: 14px;
+      color: var(--text-sub);
+    }
+
+    .nav-links a:hover {
+      color: var(--text-main);
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .nav-right button, .btn-auth {
+      padding: 8px 18px;
+      border-radius: 999px;
+      border: none;
+      background: var(--accent);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 8px 18px rgba(47, 107, 255, 0.4);
+      transition: all 0.2s ease;
+    }
+
+    .nav-right button:hover, .btn-auth:hover {
+      background: #2450d8;
+    }
+
+    .btn-outline {
+      background: transparent !important;
+      border: 1px solid rgba(255, 255, 255, 0.2) !important;
+      box-shadow: none !important;
+      color: var(--text-main) !important;
+    }
+    
+    .btn-outline:hover {
+      border-color: #fff !important;
+    }
+
+    .user-info {
+      font-size: 13px;
+      color: var(--text-sub);
+      font-weight: 500;
+    }
+
+    /* HERO */
+
+    .hero {
+      max-width: 1100px;
+      margin: 40px auto 10px;
+      padding: 0 20px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+      gap: 40px;
+      align-items: center;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(88, 144, 255, 0.6);
+      background: rgba(9, 12, 30, 0.9);
+      font-size: 11px;
+      color: var(--text-sub);
+      margin-bottom: 16px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .pill-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 8px var(--accent);
+    }
+
+    .hero-title-main {
+      font-size: 40px;
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 10px;
+    }
+
+    .hero-title-main span {
+      color: #58a6ff;
+    }
+
+    .hero-sub {
+      font-size: 15px;
+      color: var(--text-sub);
+      max-width: 480px;
+      line-height: 1.5;
+      margin-bottom: 18px;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      padding: 10px 22px;
+      border-radius: 999px;
+      border: none;
+      background: var(--accent);
+      color: #fff;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      box-shadow: 0 10px 24px var(--accent-soft);
+    }
+
+    .btn-primary:hover {
+      background: #2450d8;
+    }
+
+    .btn-ghost {
+      padding: 10px 16px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      background: transparent;
+      color: var(--text-sub);
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .btn-ghost:hover {
+      border-color: rgba(255, 255, 255, 0.3);
+      color: var(--text-main);
+    }
+
+    .hero-right {
+      justify-self: center;
+    }
+
+    .hero-card {
+      width: 100%;
+      max-width: 380px;
+      border-radius: 18px;
+      background: radial-gradient(circle at top, #111830, #050816 70%);
+      padding: 18px 18px 20px;
+      border: 1px solid rgba(120, 149, 255, 0.4);
+      box-shadow: 0 22px 40px rgba(0, 0, 0, 0.7);
+    }
+
+    .hero-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .hero-chip {
+      font-size: 11px;
+      padding: 4px 9px;
+      border-radius: 999px;
+      background: rgba(60, 210, 149, 0.16);
+      color: #7ee0b3;
+      border: 1px solid rgba(82, 231, 171, 0.5);
+    }
+
+    .hero-card-body {
+      font-size: 13px;
+      color: var(--text-sub);
+      line-height: 1.5;
+    }
+
+    /* WORKSPACE */
+
+    .workspace-wrapper {
+      max-width: 1100px;
+      margin: 10px auto 60px;
+      padding: 0 20px 40px;
+      position: relative;
+    }
+
+    .workspace {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .workspace-top {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .card {
+      background: rgba(6, 11, 30, 0.98);
+      border-radius: 18px;
+      padding: 16px 18px 18px;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.55);
+      position: relative;
+    }
+
+    .upload-card,
+    .qa-card {
+      flex: 1 1 320px;
+      min-width: 0;
+    }
+
+    .card-title {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .card-sub {
+      font-size: 12px;
+      color: var(--text-sub);
+      margin-bottom: 14px;
+    }
+
+    /* Upload */
+
+    .upload-box {
+      margin-top: 8px;
+      padding: 18px 14px;
+      border-radius: 14px;
+      border: 1px dashed rgba(255, 255, 255, 0.18);
+      background: radial-gradient(circle at top, rgba(34, 41, 88, 0.9), rgba(7, 10, 27, 0.9));
+      text-align: center;
+    }
+
+    .upload-box p {
+      font-size: 13px;
+      color: var(--text-sub);
+      margin-bottom: 10px;
+    }
+
+    .upload-box input[type="file"] {
+      display: none;
+    }
+
+    .upload-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      background: #1f6bff;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .upload-btn span {
+      font-size: 16px;
+    }
+
+    .status-text {
+      margin-top: 8px;
+      font-size: 12px;
+      text-align: left;
+      color: var(--text-sub);
+    }
+
+    .status-text.success {
+      color: var(--success);
+    }
+    .status-text.error {
+      color: var(--danger);
+    }
+
+    /* Q&A */
+
+    .qa-input {
+      width: 100%;
+      min-height: 110px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: #050816;
+      padding: 10px 12px;
+      color: var(--text-main);
+      font-size: 13px;
+      resize: vertical;
+      outline: none;
+    }
+
+    .qa-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(47, 107, 255, 0.4);
+    }
+
+    .qa-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .btn-small {
+      padding: 7px 18px;
+      border-radius: 999px;
+      font-size: 13px;
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn-ask {
+      background: var(--accent);
+      color: #fff;
+    }
+    .btn-ask:hover {
+      background: #2450d8;
+    }
+
+    /* WIDE CHAT ANSWER */
+
+    .answer-chat {
+      margin-top: 4px;
+      background: linear-gradient(145deg, #0b1020, #050816);
+      border-radius: 18px;
+      border-left: 4px solid var(--accent);
+      padding: 18px;
+      font-size: 14px;
+      line-height: 1.6;
+      max-height: 480px;
+      overflow-y: auto;
+      color: var(--text-main);
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.55);
+    }
+
+    .answer-chat-header {
+      font-size: 12px;
+      color: var(--text-sub);
+      margin-bottom: 6px;
+    }
+
+    .pages-info {
+      margin-top: 6px;
+      font-size: 13px;
+      color: var(--accent);
+    }
+
+    /* AUTH MODAL & CONTROLS */
+    .auth-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(5, 8, 22, 0.85);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .auth-overlay.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+    .auth-card {
+      width: 100%;
+      max-width: 400px;
+      background: var(--bg-card);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 18px;
+      padding: 30px 24px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+      position: relative;
+    }
+    .auth-tabs {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding-bottom: 8px;
+    }
+    .auth-tab {
+      color: var(--text-sub);
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 16px;
+      padding: 4px 8px;
+      position: relative;
+    }
+    .auth-tab.active {
+      color: var(--text-main);
+    }
+    .auth-tab.active::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: var(--accent);
+      border-radius: 99px;
+    }
+    .auth-group {
+      margin-bottom: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .auth-group label {
+      font-size: 12px;
+      color: var(--text-sub);
+      font-weight: 500;
+    }
+    .auth-input {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: #050816;
+      color: #fff;
+      font-size: 14px;
+      outline: none;
+    }
+    .auth-input:focus {
+      border-color: var(--accent);
+    }
+    .auth-btn {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: none;
+      background: var(--accent);
+      color: #fff;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    .auth-btn:hover {
+      background: #2450d8;
+    }
+    .close-auth {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: transparent;
+      border: none;
+      color: var(--text-sub);
+      font-size: 18px;
+      cursor: pointer;
+    }
+    .close-auth:hover {
+      color: #fff;
+    }
+    .auth-status-msg {
+      margin-top: 10px;
+      font-size: 12px;
+      color: var(--danger);
+      text-align: center;
+    }
+
+    /* Workspace Lock Overlay */
+    .workspace-lock {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(5, 8, 22, 0.8);
+      backdrop-filter: blur(6px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+      border-radius: 18px;
+      gap: 15px;
+      text-align: center;
+      padding: 20px;
+      transition: all 0.3s ease;
+    }
+    .workspace-lock h3 {
+      font-size: 20px;
+      font-weight: 700;
+    }
+    .workspace-lock p {
+      font-size: 14px;
+      color: var(--text-sub);
+      max-width: 320px;
+    }
+
+    /* Document selection list styling */
+    .document-list-container {
+      margin-top: 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .document-list-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-sub);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .document-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 140px;
+      overflow-y: auto;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 8px;
+      border-radius: 8px;
+      background: rgba(0, 0, 0, 0.2);
+    }
+    .document-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 12px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.02);
+      cursor: pointer;
+      font-size: 12px;
+      transition: all 0.2s ease;
+      border: 1px solid transparent;
+    }
+    .document-item:hover, .document-item.selected {
+      background: rgba(47, 107, 255, 0.1);
+    }
+    .document-item.selected {
+      border-color: var(--accent);
+      background: rgba(47, 107, 255, 0.15);
+    }
+    .document-item-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+    .delete-doc-btn {
+      background: transparent;
+      border: none;
+      color: var(--danger);
+      cursor: pointer;
+      font-size: 14px;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+    .delete-doc-btn:hover {
+      background: rgba(255, 77, 106, 0.1);
+    }
+
+    @media (max-width: 960px) {
+      .hero {
+        grid-template-columns: 1fr;
+      }
+      .hero-right {
+        order: -1;
+        justify-self: flex-start;
+      }
+      .nav {
+        padding: 12px 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <header class="nav">
+    <div class="nav-left">
+      <div class="logo-badge">
+        <span>📄</span>
+      </div>
+      <div>
+        <div class="brand">DocAnalyzer</div>
+        <div class="nav-subtitle">AI-powered investment PDFs</div>
+      </div>
+    </div>
+    <nav class="nav-links">
+      <a href="#workspace">Workspace</a>
+      <a href="https://fastapi.tiangolo.com/" target="_blank">FastAPI Docs</a>
+      <a href="https://groq.com/" target="_blank">Groq API</a>
+    </nav>
+    <div class="nav-right" id="navAuth">
+      <button class="btn-outline" onclick="openAuthModal('login')">Sign In</button>
+      <button onclick="openAuthModal('register')">Sign Up</button>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div>
+      <div class="pill">
+        <span class="pill-dot"></span>
+        AI-POWERED INVESTMENT ANALYSIS
+      </div>
+      <h1 class="hero-title-main">
+        Understand Your Investment <span>PDFs</span><br />in Seconds
+      </h1>
+      <p class="hero-sub">
+        Upload KIMs, fund factsheets, and scheme documents. Ask questions like
+        “What is the minimum investment?” or “What is the expense ratio?” and get clear answers backed only by your documents.
+      </p>
+      <div class="hero-actions">
+        <button class="btn-primary" onclick="document.getElementById('workspace').scrollIntoView({behavior:'smooth'})">
+          Go to Workspace
+        </button>
+        <button class="btn-ghost">
+          Groq RAG · PDF-native · Persistent SQLite
+        </button>
+      </div>
+    </div>
+
+    <div class="hero-right">
+      <div class="hero-card">
+        <div class="hero-card-header">
+          <div style="font-size:13px;font-weight:600;">Analysis & Q&A</div>
+          <div class="hero-chip">FastAPI · PyJWT · SQLite</div>
+        </div>
+        <div class="hero-card-body">
+          Ready to analyze your investment documents. Create an account, upload a PDF in the workspace, and ask
+          questions strictly validated by your documents.
+          <br /><br />
+          <em>“What is the minimum initial investment?”</em><br />
+          <em>“Can I redeem through a financial intermediary?”</em>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WORKSPACE -->
+  <div class="workspace-wrapper">
+    <!-- LOCK OVERLAY IF NOT AUTHENTICATED -->
+    <div id="workspaceLock" class="workspace-lock">
+      <h3>Access Secured</h3>
+      <p>Please register or log in using the buttons below to upload files and begin querying documents.</p>
+      <div style="display:flex; gap:10px;">
+        <button class="btn-auth" onclick="openAuthModal('login')">Log In</button>
+        <button class="btn-auth btn-outline" onclick="openAuthModal('register')">Create Account</button>
+      </div>
+    </div>
+
+    <section id="workspace" class="workspace">
+      <div class="workspace-top">
+        <!-- Upload card -->
+        <div class="card upload-card">
+          <div class="card-title">Upload PDFs</div>
+          <div class="card-sub">Upload KIMs, SIDs, or factsheets to index for Q&A.</div>
+
+          <div class="upload-box">
+            <p>Select a PDF to index. The server will extract, chunk, and embed the content.</p>
+            <label class="upload-btn">
+              <span>⬆</span>
+              <span>Select PDF</span>
+              <input type="file" id="pdf" accept="application/pdf" onchange="displaySelectedFilename()">
+            </label>
+            <div id="selectedFilename" style="margin-top:10px; font-size:12px; color:var(--text-sub);"></div>
+            <div style="margin-top:12px;">
+              <button class="btn-small btn-ask" onclick="uploadPDF()">Upload & Index</button>
+            </div>
+          </div>
+
+          <div id="uploadStatus" class="status-text"></div>
+          
+          <!-- Uploaded documents list -->
+          <div class="document-list-container">
+            <div class="document-list-title">My Indexed Documents</div>
+            <div class="document-list" id="docList">
+              <div style="font-size:12px; color:var(--text-sub); text-align:center; padding:10px;">No documents uploaded yet.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Q&A card -->
+        <div class="card qa-card">
+          <div class="card-title">Analysis & Q&A</div>
+          <div class="card-sub">
+            Ask questions about the selected document. Answers are generated strictly from the PDF context.
+          </div>
+
+          <textarea id="question" class="qa-input"
+            placeholder="Example: What is the minimum investment amount?&#10;Example: What are the exit load conditions?"></textarea>
+
+          <div class="qa-actions">
+            <button class="btn-small btn-ask" onclick="askQuestion()">Get Answer</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Wide chat-style answer -->
+      <div class="answer-chat" id="answerBox">
+        <div class="answer-chat-header">AI Answer</div>
+        <div id="answerText">Ask a question to see the answer here.</div>
+      </div>
+      <div id="pages" class="pages-info"></div>
+    </section>
+  </div>
+
+  <!-- AUTH MODAL -->
+  <div class="auth-overlay" id="authModal">
+    <div class="auth-card">
+      <button class="close-auth" onclick="closeAuthModal()">✕</button>
+      <div class="auth-tabs">
+        <div class="auth-tab" id="tabLogin" onclick="switchAuthTab('login')">Log In</div>
+        <div class="auth-tab" id="tabRegister" onclick="switchAuthTab('register')">Register</div>
+      </div>
+      
+      <form id="authForm" onsubmit="handleAuthSubmit(event)">
+        <div class="auth-group">
+          <label for="authEmail">Email Address</label>
+          <input type="email" id="authEmail" class="auth-input" placeholder="you@example.com" required>
+        </div>
+        <div class="auth-group">
+          <label for="authPassword">Password</label>
+          <input type="password" id="authPassword" class="auth-input" placeholder="••••••••" required>
+        </div>
+        <button type="submit" class="auth-btn" id="authSubmitBtn">Submit</button>
+        <div class="auth-status-msg" id="authStatusMsg"></div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    let activeAuthMode = 'login';
+    let userDocuments = [];
+    let selectedDocumentId = null;
+    let conversationId = null;       // Active conversation session ID
+    let chatHistory = [];            // In-memory display history
+
+    // Check token status on load
+    window.addEventListener('DOMContentLoaded', () => {
+      checkAuthStatus();
+    });
+
+    function checkAuthStatus() {
+      const token = localStorage.getItem('access_token');
+      const navAuth = document.getElementById('navAuth');
+      const lock = document.getElementById('workspaceLock');
+
+      if (token) {
+        // User logged in
+        navAuth.innerHTML = `
+          <span class="user-info">Logged In</span>
+          <button class="btn-outline" onclick="logout()">Sign Out</button>
+        `;
+        lock.style.display = 'none';
+        loadDocuments();
+        initConversation();  // Create a conversation session for this login
+      } else {
+        // User logged out
+        navAuth.innerHTML = `
+          <button class="btn-outline" onclick="openAuthModal('login')">Sign In</button>
+          <button onclick="openAuthModal('register')">Sign Up</button>
+        `;
+        lock.style.display = 'flex';
+        selectedDocumentId = null;
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem('access_token');
+      conversationId = null;
+      chatHistory = [];
+      checkAuthStatus();
+      document.getElementById('uploadStatus').textContent = "";
+      document.getElementById('answerText').textContent = "Ask a question to see the answer here.";
+      document.getElementById('pages').textContent = "";
+      renderChatHistory();
+    }
+
+    // --- Conversation Session Management ---
+    async function initConversation() {
+      const token = localStorage.getItem('access_token');
+      if (!token) return;
+      try {
+        const res = await fetch('/api/v1/chat/conversations', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          conversationId = data.id;
+          console.log('Conversation started. ID:', conversationId);
+        } else {
+          console.warn('Could not start conversation session.');
+        }
+      } catch (e) {
+        console.error('initConversation error:', e);
+      }
+    }
+
+    function renderChatHistory() {
+      const answerTextEl = document.getElementById('answerText');
+      if (chatHistory.length === 0) {
+        answerTextEl.innerHTML = 'Ask a question to see the answer here.';
+        return;
+      }
+      answerTextEl.innerHTML = chatHistory.map(turn => `
+        <div style="margin-bottom:18px;">
+          <div style="color:var(--text-sub);font-size:12px;margin-bottom:4px;">🧑 You</div>
+          <div style="background:rgba(47,107,255,0.12);border-radius:8px;padding:10px 14px;margin-bottom:8px;white-space:pre-wrap;">${escapeHtml(turn.question)}</div>
+          <div style="color:var(--text-sub);font-size:12px;margin-bottom:4px;">🤖 AI Analyst</div>
+          <div style="background:rgba(255,255,255,0.04);border-radius:8px;padding:12px 16px;">${parseMarkdown(turn.answer)}</div>
+          ${turn.pages && turn.pages.length > 0
+            ? `<div style="font-size:11px;color:var(--text-sub);margin-top:6px;">📄 Source page(s): ${turn.pages.join(', ')}</div>`
+            : ''}
+        </div>
+      `).join('');
+      // Scroll to bottom
+      answerTextEl.scrollTop = answerTextEl.scrollHeight;
+    }
+
+    function parseMarkdown(text) {
+      // Escape HTML to prevent XSS
+      let escaped = escapeHtml(text);
+
+      // Convert Bold (**text** or __text__)
+      escaped = escaped.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+      escaped = escaped.replace(/__(.*?)__/g, '<strong>$1</strong>');
+
+      // Convert Italic (*text* or _text_)
+      escaped = escaped.replace(/\*(.*?)\*/g, '<em>$1</em>');
+      escaped = escaped.replace(/_(.*?)_/g, '<em>$1</em>');
+
+      // Convert Code spans (`code`)
+      escaped = escaped.replace(/`(.*?)`/g, '<code style="background:rgba(255,255,255,0.1); padding:2px 5px; border-radius:4px; font-family:monospace; font-size:90%;">$1</code>');
+
+      // Split into blocks by double newlines or table boundary
+      const blocks = escaped.split(/\n{2,}/);
+      const htmlBlocks = blocks.map(block => {
+        block = block.trim();
+        if (!block) return '';
+
+        // --- Table Handling ---
+        // Basic Markdown table detection (lines starting/ending with | or containing multiple |)
+        if (block.includes('|') && block.split('\n').some(line => line.includes('---'))) {
+          const lines = block.split('\n').filter(l => l.trim().length > 0);
+          let tableHtml = '<div style="overflow-x:auto; margin-bottom:12px;"><table style="width:100%; border-collapse:collapse; font-size:13px; margin-top:8px; border: 1px solid rgba(255,255,255,0.08);">';
+          let hasSeparator = false;
+
+          lines.forEach((line, index) => {
+            if (line.includes('---') && (line.includes('|') || line.includes('-'))) {
+              hasSeparator = true;
+              return; // skip separator row
+            }
+
+            // Extract cells (ignoring leading/trailing empty cells from splitting)
+            let cells = line.split('|').map(c => c.trim());
+            if (line.startsWith('|')) cells.shift();
+            if (line.endsWith('|')) cells.pop();
+
+            tableHtml += '<tr style="border-bottom:1px solid rgba(255,255,255,0.06);">';
+            cells.forEach(cell => {
+              // If it's the first row and we haven't hit separator yet, treat as header
+              if (index === 0 && !hasSeparator) {
+                tableHtml += `<th style="text-align:left; padding:8px 12px; background:rgba(255,255,255,0.03); font-weight:600; color:var(--text-main); border: 1px solid rgba(255,255,255,0.08);">${cell}</th>`;
+              } else {
+                tableHtml += `<td style="padding:8px 12px; border: 1px solid rgba(255,255,255,0.08);">${cell}</td>`;
+              }
+            });
+            tableHtml += '</tr>';
+          });
+
+          tableHtml += '</table></div>';
+          return tableHtml;
+        }
+
+        // --- Bullet List Handling ---
+        if (block.startsWith('- ') || block.startsWith('* ')) {
+          const items = block.split(/\n\s*[-*]\s+/).map((item, idx) => {
+            // strip leading bullet char for the very first item
+            if (idx === 0) item = item.replace(/^[-*]\s+/, '');
+            return `<li style="margin-bottom: 6px; line-height:1.5;">${item.trim().replace(/\n/g, '<br>')}</li>`;
+          }).join('');
+          return `<ul style="margin-left: 20px; margin-bottom: 12px; list-style-type: disc; padding-left: 5px;">${items}</ul>`;
+        }
+
+        // --- Numbered List Handling ---
+        if (/^\d+\.\s/.test(block)) {
+          const items = block.split(/\n\s*\d+\.\s+/).map((item, idx) => {
+            if (idx === 0) item = item.replace(/^\d+\.\s+/, '');
+            return `<li style="margin-bottom: 6px; line-height:1.5;">${item.trim().replace(/\n/g, '<br>')}</li>`;
+          }).join('');
+          return `<ol style="margin-left: 20px; margin-bottom: 12px; list-style-type: decimal; padding-left: 5px;">${items}</ol>`;
+        }
+
+        // --- Headings ---
+        if (block.startsWith('### ')) {
+          return `<h4 style="margin-top:14px; margin-bottom:6px; color:var(--text-main); font-weight:600;">${block.substring(4)}</h4>`;
+        }
+        if (block.startsWith('## ')) {
+          return `<h3 style="margin-top:18px; margin-bottom:8px; color:var(--text-main); font-weight:700;">${block.substring(3)}</h3>`;
+        }
+        if (block.startsWith('# ')) {
+          return `<h2 style="margin-top:22px; margin-bottom:10px; color:var(--text-main); font-weight:800;">${block.substring(2)}</h2>`;
+        }
+
+        // --- Regular Paragraph ---
+        const withBreaks = block.replace(/\n/g, '<br>');
+        return `<p style="margin-bottom: 12px; line-height: 1.6;">${withBreaks}</p>`;
+      });
+
+      return htmlBlocks.join('');
+    }
+
+    function escapeHtml(text) {
+      return String(text)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    // Modal Control
+    function openAuthModal(mode) {
+      activeAuthMode = mode;
+      document.getElementById('authModal').classList.add('active');
+      document.getElementById('authStatusMsg').textContent = "";
+      switchAuthTab(mode);
+    }
+
+    function closeAuthModal() {
+      document.getElementById('authModal').classList.remove('active');
+      document.getElementById('authForm').reset();
+    }
+
+    function switchAuthTab(mode) {
+      activeAuthMode = mode;
+      const tabL = document.getElementById('tabLogin');
+      const tabR = document.getElementById('tabRegister');
+      const btn = document.getElementById('authSubmitBtn');
+
+      if (mode === 'login') {
+        tabL.classList.add('active');
+        tabR.classList.remove('active');
+        btn.textContent = 'Log In';
+      } else {
+        tabR.classList.add('active');
+        tabL.classList.remove('active');
+        btn.textContent = 'Register Account';
+      }
+      document.getElementById('authStatusMsg').textContent = "";
+    }
+
+    // Auth actions
+    function handleAuthSubmit(event) {
+      event.preventDefault();
+      const email = document.getElementById('authEmail').value.trim();
+      const password = document.getElementById('authPassword').value;
+      const statusMsg = document.getElementById('authStatusMsg');
+
+      statusMsg.textContent = "Processing...";
+      statusMsg.style.color = "var(--text-sub)";
+
+      if (activeAuthMode === 'register') {
+        // Register API endpoint
+        fetch('/api/v1/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        })
+        .then(async res => {
+          const data = await res.json();
+          if (res.ok) {
+            statusMsg.textContent = "✅ Registered! Logging in...";
+            statusMsg.style.color = "var(--success)";
+            // Log user in automatically
+            loginUser(email, password);
+          } else {
+            statusMsg.textContent = "❌ " + (data.msg || "Registration failed");
+            statusMsg.style.color = "var(--danger)";
+          }
+        })
+        .catch(err => {
+          statusMsg.textContent = "❌ Error connecting to server: " + err;
+          statusMsg.style.color = "var(--danger)";
+        });
+      } else {
+        loginUser(email, password);
+      }
+    }
+
+    function loginUser(email, password) {
+      const statusMsg = document.getElementById('authStatusMsg');
+      
+      // OAuth2PasswordRequestForm expects form-urlencoded body
+      const formBody = [];
+      formBody.push(encodeURIComponent('username') + '=' + encodeURIComponent(email));
+      formBody.push(encodeURIComponent('password') + '=' + encodeURIComponent(password));
+      
+      fetch('/api/v1/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: formBody.join('&')
+      })
+      .then(async res => {
+        const data = await res.json();
+        if (res.ok) {
+          localStorage.setItem('access_token', data.access_token);
+          statusMsg.textContent = "✅ Logged in successfully!";
+          statusMsg.style.color = "var(--success)";
+          setTimeout(() => {
+            closeAuthModal();
+            checkAuthStatus();
+          }, 800);
+        } else {
+          statusMsg.textContent = "❌ " + (data.msg || "Invalid credentials");
+          statusMsg.style.color = "var(--danger)";
+        }
+      })
+      .catch(err => {
+        statusMsg.textContent = "❌ Error connecting to server: " + err;
+        statusMsg.style.color = "var(--danger)";
+      });
+    }
+
+    // Documents management
+    function loadDocuments() {
+      const token = localStorage.getItem('access_token');
+      const listEl = document.getElementById('docList');
+
+      fetch('/api/v1/documents/', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      })
+      .then(res => res.json())
+      .then(docs => {
+        if (Array.isArray(docs)) {
+          userDocuments = docs;
+          renderDocuments();
+        }
+      })
+      .catch(err => console.error("Error loading documents: ", err));
+    }
+
+    function renderDocuments() {
+      const listEl = document.getElementById('docList');
+      if (userDocuments.length === 0) {
+        listEl.innerHTML = '<div style="font-size:12px; color:var(--text-sub); text-align:center; padding:10px;">No documents uploaded yet.</div>';
+        selectedDocumentId = null;
+        return;
+      }
+
+      listEl.innerHTML = "";
+      userDocuments.forEach(doc => {
+        const isSelected = selectedDocumentId === doc.id;
+        const item = document.createElement('div');
+        item.className = `document-item ${isSelected ? 'selected' : ''}`;
+        item.onclick = (e) => {
+          // If clicked the delete button, don't trigger selection
+          if (e.target.tagName === 'BUTTON') return;
+          selectDocument(doc.id);
+        };
+
+        item.innerHTML = `
+          <div class="document-item-left">
+            <span>📄</span>
+            <span title="${doc.filename}">${doc.filename}</span>
+          </div>
+          <button class="delete-doc-btn" onclick="deleteDocument(${doc.id})">✕</button>
+        `;
+        listEl.appendChild(item);
+      });
+
+      // Default select the first document if nothing selected yet
+      if (selectedDocumentId === null && userDocuments.length > 0) {
+        selectDocument(userDocuments[0].id);
+      }
+    }
+
+    function selectDocument(docId) {
+      selectedDocumentId = docId;
+      renderDocuments();
+    }
+
+    function deleteDocument(docId) {
+      if (!confirm("Are you sure you want to delete this document index?")) return;
+      const token = localStorage.getItem('access_token');
+
+      fetch(`/api/v1/documents/${docId}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.status === 'ok') {
+          if (selectedDocumentId === docId) {
+            selectedDocumentId = null;
+          }
+          loadDocuments();
+        } else {
+          alert("Delete failed: " + data.msg);
+        }
+      })
+      .catch(err => console.error("Error deleting document: ", err));
+    }
+
+    function displaySelectedFilename() {
+      const fileInput = document.getElementById("pdf");
+      const filenameDiv = document.getElementById("selectedFilename");
+      if (fileInput.files[0]) {
+        filenameDiv.textContent = "Selected: " + fileInput.files[0].name;
+      }
+    }
+
+    function uploadPDF() {
+      const fileInput = document.getElementById("pdf");
+      const file = fileInput.files[0];
+      const statusEl = document.getElementById("uploadStatus");
+      const token = localStorage.getItem('access_token');
+
+      if (!file) {
+        alert("Please choose a PDF first.");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("pdf", file);
+
+      statusEl.textContent = "Uploading & processing PDF...";
+      statusEl.className = "status-text";
+
+      fetch("/api/v1/documents/upload", {
+        method: "POST",
+        headers: { 'Authorization': `Bearer ${token}` },
+        body: formData
+      })
+      .then(async res => {
+        const data = await res.json();
+        if (res.ok) {
+          statusEl.textContent = "✅ PDF processed successfully!";
+          statusEl.className = "status-text success";
+          fileInput.value = ""; // Clear file selector
+          document.getElementById("selectedFilename").textContent = "";
+          loadDocuments(); // Reload list
+        } else {
+          statusEl.textContent = "❌ " + (data.msg || "Failed to upload document");
+          statusEl.className = "status-text error";
+        }
+      })
+      .catch(err => {
+        statusEl.textContent = "❌ Connection Error: " + err;
+        statusEl.className = "status-text error";
+      });
+    }
+
+    function askQuestion() {
+      const qEl = document.getElementById("question");
+      const question = qEl.value.trim();
+      const answerTextEl = document.getElementById("answerText");
+      const pagesEl = document.getElementById("pages");
+      const token = localStorage.getItem('access_token');
+
+      if (!question) {
+        alert("Please type a question.");
+        return;
+      }
+
+      // Build URL — attach conversation_id if we have an active session
+      let askUrl = '/api/v1/chat/ask';
+      if (conversationId) {
+        askUrl += `?conversation_id=${conversationId}`;
+      }
+
+      // Show loading state in chat history panel
+      chatHistory.push({ question, answer: '⏳ Thinking...', pages: [] });
+      renderChatHistory();
+      pagesEl.textContent = '';
+
+      const bodyData = { question };
+      if (selectedDocumentId) bodyData.document_id = selectedDocumentId;
+
+      fetch(askUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(bodyData)
+      })
+      .then(async res => {
+        const data = await res.json();
+        // Replace the last 'Thinking...' entry
+        const lastTurn = chatHistory[chatHistory.length - 1];
+        if (res.ok) {
+          lastTurn.answer = data.answer || 'No answer.';
+          lastTurn.pages = data.pages || [];
+        } else {
+          lastTurn.answer = '❌ ' + (data.msg || 'Query failed');
+          lastTurn.pages = [];
+        }
+        renderChatHistory();
+        // If no session existed before, start one now for next turn
+        if (!conversationId) initConversation();
+      })
+      .catch(err => {
+        const lastTurn = chatHistory[chatHistory.length - 1];
+        lastTurn.answer = '❌ Connection Error: ' + err;
+        renderChatHistory();
+      });
+    }
+  </script>
+</body>
+</html>
